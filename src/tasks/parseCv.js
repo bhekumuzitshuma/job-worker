@@ -122,6 +122,23 @@ export async function parseCv(task) {
     console.log(`✅ Profile created for ${profile.full_name || "user"}`);
   }
 
+  // Create match_jobs task
+  console.log("📋 Creating match_jobs task...");
+  const { data: taskData, error: taskError } = await supabase
+    .from("tasks")
+    .insert({
+      type: "match_jobs",
+      payload: { user_id },
+      status: "pending",
+    })
+    .select();
+
+  if (taskError) {
+    throw new Error(`Failed to create match_jobs task: ${taskError.message}`);
+  }
+
+  console.log(`✅ match_jobs task created with ID: ${taskData[0].id}`);
+
   return { profile, result };
 }
 
